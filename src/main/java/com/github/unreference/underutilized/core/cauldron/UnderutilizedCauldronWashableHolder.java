@@ -21,5 +21,6 @@ public final class UnderutilizedCauldronWashableHolder {
             map.put(ItemTags.TERRACOTTA, Items.TERRACOTTA);
             map.put(UnderutilizedItemTags.STAINED_GLASS, Items.GLASS);
             map.put(UnderutilizedItemTags.STAINED_GLASS_PANES, Items.GLASS_PANE);
+            // TODO: Glazed terracotta -> terracotta (white glazed terracotta -> white terracotta)
           });
 }

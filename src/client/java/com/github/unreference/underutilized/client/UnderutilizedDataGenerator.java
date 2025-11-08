@@ -1,5 +1,7 @@
 package com.github.unreference.underutilized.client;
 
+import com.github.unreference.underutilized.client.data.models.UnderutilizedModelProvider;
+import com.github.unreference.underutilized.data.loot.UnderutilizedBlockLootTableProvider;
 import com.github.unreference.underutilized.data.tags.UnderutilizedBlockTagsProvider;
 import com.github.unreference.underutilized.data.tags.UnderutilizedItemTagsProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -14,5 +16,8 @@ public class UnderutilizedDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(UnderutilizedBlockTagsProvider::new);
     pack.addProvider(
         (output, lookup) -> new UnderutilizedItemTagsProvider(output, lookup, blockTags));
+
+    pack.addProvider(UnderutilizedModelProvider::new);
+    pack.addProvider(UnderutilizedBlockLootTableProvider::new);
   }
 }

@@ -5,7 +5,10 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "core.cauldron.UnderutilizedMixinCauldronInteraction",
-    "world.item.UnderutilizedMixinBlockItem"
+    "world.item.UnderutilizedMixinBlockItem",
+    "world.level.block.UnderutilizedMixinCauldronBlock",
+    "world.level.block.UnderutilizedMixinLavaCauldronBlock",
+    "world.level.block.UnderutilizedMixinLayeredCauldronBlock"
   ],
   "injectors": {
     "defaultRequire": 1

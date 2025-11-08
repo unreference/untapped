@@ -1,8 +1,7 @@
 package com.github.unreference.underutilized.tags;
 
-import com.github.unreference.underutilized.Underutilized;
+import com.github.unreference.underutilized.resources.UnderutilizedResourceLocation;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
@@ -12,6 +11,6 @@ public final class UnderutilizedBlockTags {
 
   private static TagKey<Block> create(String name) {
     return TagKey.create(
-        Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(Underutilized.MOD_ID, name));
+        Registries.BLOCK, UnderutilizedResourceLocation.withDefaultNamespace(name));
   }
 }

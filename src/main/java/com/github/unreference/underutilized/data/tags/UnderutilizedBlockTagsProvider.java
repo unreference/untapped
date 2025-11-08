@@ -1,10 +1,12 @@
 package com.github.unreference.underutilized.data.tags;
 
 import com.github.unreference.underutilized.tags.UnderutilizedBlockTags;
+import com.github.unreference.underutilized.world.level.block.UnderutilizedBlocks;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 
 public final class UnderutilizedBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
@@ -52,5 +54,7 @@ public final class UnderutilizedBlockTagsProvider extends FabricTagProvider.Bloc
             Blocks.GREEN_STAINED_GLASS_PANE,
             Blocks.RED_STAINED_GLASS_PANE,
             Blocks.BLACK_STAINED_GLASS_PANE);
+
+    this.valueLookupBuilder(BlockTags.CAULDRONS).add(UnderutilizedBlocks.HONEY_CAULDRON);
   }
 }
