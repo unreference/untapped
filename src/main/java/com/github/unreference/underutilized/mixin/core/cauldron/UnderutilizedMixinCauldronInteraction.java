@@ -28,11 +28,11 @@ public interface UnderutilizedMixinCauldronInteraction {
             for (Map.Entry<TagKey<Item>, Item> entry :
                 UnderutilizedCauldronWashableHolder.WASHABLE.entrySet()) {
               final TagKey<Item> washable = entry.getKey();
-              final ItemLike base = entry.getValue();
+              final ItemLike uncolored = entry.getValue();
 
-              if (itemStack.is(washable) && itemStack.getItem() != base.asItem()) {
+              if (itemStack.is(washable) && itemStack.getItem() != uncolored.asItem()) {
                 if (!level.isClientSide()) {
-                  ItemStack washed = itemStack.transmuteCopy(base, 1);
+                  final ItemStack washed = itemStack.transmuteCopy(uncolored, 1);
                   player.setItemInHand(
                       interactionHand,
                       ItemUtils.createFilledResult(itemStack, player, washed, false));

@@ -4,7 +4,8 @@
   "package": "com.github.unreference.underutilized.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "core.cauldron.UnderutilizedMixinCauldronInteraction"
+    "core.cauldron.UnderutilizedMixinCauldronInteraction",
+    "world.item.UnderutilizedMixinBlockItem"
   ],
   "injectors": {
     "defaultRequire": 1
