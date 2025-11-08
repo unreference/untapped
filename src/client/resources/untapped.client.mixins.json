@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.github.unreference.untapped.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "renderer.entity.UntappedMixinLivingEntityRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}

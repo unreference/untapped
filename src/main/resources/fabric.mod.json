@@ -1,29 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "underutilized",
+  "id": "untapped",
   "version": "${version}",
-  "name": "Underutilized",
+  "name": "Untapped",
   "description": "",
   "authors": [],
   "contact": {},
   "license": "GPL-3.0",
-  "icon": "assets/underutilized/icon.png",
+  "icon": "assets/untapped/icon.png",
   "environment": "*",
   "entrypoints": {
     "fabric-datagen": [
-      "com.github.unreference.underutilized.client.UnderutilizedDataGenerator"
+      "com.github.unreference.untapped.client.UntappedDataGenerator"
     ],
     "client": [
-      "com.github.unreference.underutilized.client.UnderutilizedClient"
+      "com.github.unreference.untapped.client.UntappedClient"
     ],
     "main": [
-      "com.github.unreference.underutilized.Underutilized"
+      "com.github.unreference.untapped.Untapped"
     ]
   },
   "mixins": [
-    "underutilized.mixins.json",
+    "untapped.mixins.json",
     {
-      "config": "underutilized.client.mixins.json",
+      "config": "untapped.client.mixins.json",
       "environment": "client"
     }
   ],
