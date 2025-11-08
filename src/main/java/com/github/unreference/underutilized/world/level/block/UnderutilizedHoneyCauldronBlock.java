@@ -3,8 +3,11 @@ package com.github.unreference.underutilized.world.level.block;
 import com.github.unreference.underutilized.world.level.block.entity.UnderutilizedBlockEntityType;
 import com.github.unreference.underutilized.world.level.block.entity.UnderutilizedHoneyCauldronBlockEntity;
 import com.mojang.serialization.MapCodec;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import java.util.Map;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -14,6 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
@@ -37,9 +41,9 @@ import org.jetbrains.annotations.Nullable;
 
 public final class UnderutilizedHoneyCauldronBlock extends BaseEntityBlock {
   public static final IntegerProperty HONEY_LEVEL = BlockStateProperties.LEVEL_CAULDRON;
-
+  public static final Map<Item, CauldronInteraction> HONEY_CAULDRON_INTERACTIONS =
+      createInteractionMap();
   private static final VoxelShape CAULDRON_INNER_SHAPE = Block.column(12.0, 4.0, 16.0);
-
   private static final VoxelShape CAULDRON_WALLS_SHAPE =
       Util.make(
           () ->
@@ -51,7 +55,6 @@ public final class UnderutilizedHoneyCauldronBlock extends BaseEntityBlock {
                       Block.column(8.0, 16.0, 0.0, 3.0),
                       Block.column(12.0, 0.0, 3.0)),
                   BooleanOp.ONLY_FIRST));
-
   private static final VoxelShape[] HONEY_LEVEL_SHAPES =
       Util.make(
           new VoxelShape[4],
@@ -67,23 +70,126 @@ public final class UnderutilizedHoneyCauldronBlock extends BaseEntityBlock {
     this.registerDefaultState(this.getStateDefinition().any().setValue(HONEY_LEVEL, 1));
   }
 
-  private static void showParticles(Entity entity, int amount) {
-    if (entity.level().isClientSide()) {
-      final BlockState blockState = UnderutilizedBlocks.HONEY_CAULDRON.defaultBlockState();
+  private static Map<Item, CauldronInteraction> createInteractionMap() {
+    final Map<Item, CauldronInteraction> map = new Object2ObjectOpenHashMap<>();
+    final ItemStack bucket = new ItemStack(Items.BUCKET);
 
-      for (int particles = 0; particles < amount; particles++) {
-        entity
-            .level()
-            .addParticle(
-                new BlockParticleOption(ParticleTypes.BLOCK, blockState),
-                entity.getX(),
-                entity.getY(),
-                entity.getZ(),
-                0.0,
-                0.0,
-                0.0);
-      }
-    }
+    map.put(
+        Items.WATER_BUCKET,
+        ((blockState, level, blockPos, player, interactionHand, itemStack) -> {
+          if (!level.isClientSide()) {
+            if (!player.hasInfiniteMaterials()) {
+              player.setItemInHand(interactionHand, bucket.copy());
+            } else {
+              if (!player.getInventory().contains(bucket.copy())) {
+                if (!player.getInventory().add(bucket.copy())) {
+                  player.drop(bucket.copy(), false);
+                }
+              }
+            }
+
+            player.awardStat(Stats.FILL_CAULDRON);
+            level.setBlock(
+                blockPos,
+                Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3),
+                Block.UPDATE_ALL);
+            level.playSound(null, blockPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS);
+          }
+
+          return InteractionResult.SUCCESS;
+        }));
+
+    map.put(
+        Items.LAVA_BUCKET,
+        ((blockState, level, blockPos, player, interactionHand, itemStack) -> {
+          if (!level.isClientSide()) {
+            if (!player.hasInfiniteMaterials()) {
+              player.setItemInHand(interactionHand, bucket.copy());
+            } else {
+              if (!player.getInventory().contains(bucket.copy())) {
+                if (!player.getInventory().add(bucket.copy())) {
+                  player.drop(bucket.copy(), false);
+                }
+              }
+            }
+
+            player.awardStat(Stats.FILL_CAULDRON);
+            level.setBlock(blockPos, Blocks.LAVA_CAULDRON.defaultBlockState(), Block.UPDATE_ALL);
+            level.playSound(null, blockPos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS);
+          }
+
+          return InteractionResult.SUCCESS;
+        }));
+
+    map.put(
+        Items.POWDER_SNOW_BUCKET,
+        ((blockState, level, blockPos, player, interactionHand, itemStack) -> {
+          if (!level.isClientSide()) {
+            if (!player.hasInfiniteMaterials()) {
+              player.setItemInHand(interactionHand, new ItemStack(Items.BUCKET));
+            } else {
+              if (!player.getInventory().contains(bucket.copy())) {
+                if (!player.getInventory().add(bucket.copy())) {
+                  player.drop(bucket.copy(), false);
+                }
+              }
+            }
+
+            player.awardStat(Stats.FILL_CAULDRON);
+            level.setBlock(
+                blockPos,
+                Blocks.POWDER_SNOW_CAULDRON
+                    .defaultBlockState()
+                    .setValue(LayeredCauldronBlock.LEVEL, 3),
+                Block.UPDATE_ALL);
+            level.playSound(
+                null, blockPos, SoundEvents.BUCKET_EMPTY_POWDER_SNOW, SoundSource.BLOCKS);
+          }
+
+          return InteractionResult.SUCCESS;
+        }));
+
+    map.put(
+        Items.GLASS_BOTTLE,
+        ((blockState, level, blockPos, player, interactionHand, itemStack) -> {
+          final int currentHoneyLevel = blockState.getValue(HONEY_LEVEL);
+          if (currentHoneyLevel == 0) {
+            return InteractionResult.PASS;
+          }
+
+          if (!level.isClientSide()) {
+            final ItemStack honeyBottle = new ItemStack(Items.HONEY_BOTTLE);
+
+            if (!player.hasInfiniteMaterials()) {
+              itemStack.shrink(1);
+              if (itemStack.isEmpty()) {
+                player.setItemInHand(interactionHand, honeyBottle);
+              } else if (!player.getInventory().add(honeyBottle)) {
+                player.drop(honeyBottle, false);
+              }
+            } else {
+              if (!player.getInventory().contains(honeyBottle)) {
+                if (!player.getInventory().add(honeyBottle)) {
+                  player.drop(honeyBottle, false);
+                }
+              }
+            }
+
+            player.awardStat(Stats.USE_CAULDRON);
+            final BlockState newBlockState =
+                (currentHoneyLevel > 1)
+                    ? blockState.setValue(HONEY_LEVEL, currentHoneyLevel - 1)
+                    : Blocks.CAULDRON.defaultBlockState();
+
+            level.setBlock(blockPos, newBlockState, Block.UPDATE_ALL);
+            level.playSound(null, blockPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS);
+          }
+
+          return InteractionResult.SUCCESS;
+        }));
+
+    map.put(Items.HONEY_BOTTLE, UnderutilizedHoneyCauldronBlock::fillWithHoney);
+    return map;
   }
 
   public static InteractionResult fillWithHoney(
@@ -91,10 +197,19 @@ public final class UnderutilizedHoneyCauldronBlock extends BaseEntityBlock {
       Level level,
       BlockPos blockPos,
       Player player,
-      InteractionHand interactionHand) {
+      InteractionHand interactionHand,
+      ItemStack itemStack) {
     if (!level.isClientSide()) {
+      final ItemStack glassBottle = new ItemStack(Items.GLASS_BOTTLE);
+
       if (!player.hasInfiniteMaterials()) {
-        player.setItemInHand(interactionHand, new ItemStack(Items.GLASS_BOTTLE));
+        player.setItemInHand(interactionHand, glassBottle);
+      } else {
+        if (!player.getInventory().contains(glassBottle)) {
+          if (!player.getInventory().add(glassBottle)) {
+            player.drop(glassBottle, false);
+          }
+        }
       }
 
       player.awardStat(Stats.USE_CAULDRON);
@@ -117,6 +232,25 @@ public final class UnderutilizedHoneyCauldronBlock extends BaseEntityBlock {
     }
 
     return InteractionResult.SUCCESS;
+  }
+
+  private static void showParticles(Entity entity, int amount) {
+    if (entity.level().isClientSide()) {
+      final BlockState blockState = UnderutilizedBlocks.HONEY_CAULDRON.defaultBlockState();
+
+      for (int particles = 0; particles < amount; particles++) {
+        entity
+            .level()
+            .addParticle(
+                new BlockParticleOption(ParticleTypes.BLOCK, blockState),
+                entity.getX(),
+                entity.getY(),
+                entity.getZ(),
+                0.0,
+                0.0,
+                0.0);
+      }
+    }
   }
 
   @Override
@@ -161,95 +295,11 @@ public final class UnderutilizedHoneyCauldronBlock extends BaseEntityBlock {
       Player player,
       InteractionHand interactionHand,
       BlockHitResult blockHitResult) {
-    if (itemStack.isEmpty()) {
-      return InteractionResult.PASS;
-    }
-
-    final int currentHoneyLevel = blockState.getValue(HONEY_LEVEL);
-
-    if (itemStack.is(Items.WATER_BUCKET)) {
-      if (!level.isClientSide()) {
-        if (!player.hasInfiniteMaterials()) {
-          player.setItemInHand(interactionHand, new ItemStack(Items.BUCKET));
-        }
-
-        player.awardStat(Stats.FILL_CAULDRON);
-        level.setBlock(
-            blockPos,
-            Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3),
-            Block.UPDATE_ALL);
-        level.playSound(null, blockPos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS);
-      }
-
-      return InteractionResult.SUCCESS;
-    }
-
-    if (itemStack.is(Items.LAVA_BUCKET)) {
-      if (!level.isClientSide()) {
-        if (!player.hasInfiniteMaterials()) {
-          player.setItemInHand(interactionHand, new ItemStack(Items.BUCKET));
-        }
-
-        player.awardStat(Stats.FILL_CAULDRON);
-        level.setBlock(blockPos, Blocks.LAVA_CAULDRON.defaultBlockState(), Block.UPDATE_ALL);
-        level.playSound(null, blockPos, SoundEvents.BUCKET_EMPTY_LAVA, SoundSource.BLOCKS);
-      }
-
-      return InteractionResult.SUCCESS;
-    }
-
-    if (itemStack.is(Items.POWDER_SNOW_BUCKET)) {
-      if (!level.isClientSide()) {
-        if (!player.hasInfiniteMaterials()) {
-          player.setItemInHand(interactionHand, new ItemStack(Items.BUCKET));
-        }
-
-        player.awardStat(Stats.FILL_CAULDRON);
-        level.setBlock(
-            blockPos,
-            Blocks.POWDER_SNOW_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3),
-            Block.UPDATE_ALL);
-        level.playSound(null, blockPos, SoundEvents.BUCKET_EMPTY_POWDER_SNOW, SoundSource.BLOCKS);
-      }
-
-      return InteractionResult.SUCCESS;
-    }
-
-    if (itemStack.is(Items.GLASS_BOTTLE)) {
-      if (currentHoneyLevel > 0) {
-        if (!level.isClientSide()) {
-          if (currentHoneyLevel > 1) {
-            level.setBlock(
-                blockPos,
-                blockState.setValue(HONEY_LEVEL, currentHoneyLevel - 1),
-                Block.UPDATE_ALL);
-          } else {
-            level.setBlock(blockPos, Blocks.CAULDRON.defaultBlockState(), Block.UPDATE_ALL);
-          }
-
-          player.awardStat(Stats.USE_CAULDRON);
-
-          if (!player.hasInfiniteMaterials()) {
-            itemStack.shrink(1);
-          }
-
-          if (itemStack.isEmpty()) {
-            player.setItemInHand(interactionHand, new ItemStack(Items.HONEY_BOTTLE));
-          } else if (!player.getInventory().add(new ItemStack(Items.HONEY_BOTTLE))) {
-            player.drop(new ItemStack(Items.HONEY_BOTTLE), false);
-          }
-
-          level.playSound(null, blockPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS);
-        }
-
-        return InteractionResult.SUCCESS;
-      }
-
-      return InteractionResult.PASS;
-    }
-
-    if (itemStack.is(Items.HONEY_BOTTLE)) {
-      return fillWithHoney(blockState, level, blockPos, player, interactionHand);
+    final CauldronInteraction cauldronInteraction =
+        HONEY_CAULDRON_INTERACTIONS.get(itemStack.getItem());
+    if (cauldronInteraction != null) {
+      return cauldronInteraction.interact(
+          blockState, level, blockPos, player, interactionHand, itemStack);
     }
 
     return super.useItemOn(

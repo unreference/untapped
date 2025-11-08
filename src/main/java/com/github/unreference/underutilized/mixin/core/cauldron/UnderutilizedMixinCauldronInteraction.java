@@ -9,7 +9,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,22 +24,38 @@ public interface UnderutilizedMixinCauldronInteraction {
     if (water instanceof Object2ObjectOpenHashMap<Item, CauldronInteraction> map) {
       final CauldronInteraction washing =
           (blockState, level, blockPos, player, interactionHand, itemStack) -> {
-            for (Map.Entry<TagKey<Item>, Item> entry :
-                UnderutilizedCauldronWashableHolder.WASHABLE.entrySet()) {
-              final TagKey<Item> washable = entry.getKey();
-              final ItemLike uncolored = entry.getValue();
+            final Item itemToWash = itemStack.getItem();
+            Item uncoloredResultItem = null;
 
-              if (itemStack.is(washable) && itemStack.getItem() != uncolored.asItem()) {
-                if (!level.isClientSide()) {
-                  final ItemStack washed = itemStack.transmuteCopy(uncolored, 1);
-                  player.setItemInHand(
-                      interactionHand,
-                      ItemUtils.createFilledResult(itemStack, player, washed, false));
-                  LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
+            if (UnderutilizedCauldronWashableHolder.WASHABLE_GLAZED_TERRACOTTA.containsKey(
+                itemToWash)) {
+              uncoloredResultItem =
+                  UnderutilizedCauldronWashableHolder.WASHABLE_GLAZED_TERRACOTTA.get(itemToWash);
+            }
+
+            if (uncoloredResultItem == null) {
+              for (Map.Entry<TagKey<Item>, Item> entry :
+                  UnderutilizedCauldronWashableHolder.WASHABLE.entrySet()) {
+                final TagKey<Item> washable = entry.getKey();
+                final Item uncoloredItem = entry.getValue();
+
+                if (itemStack.is(washable) && itemStack.getItem() != uncoloredItem) {
+                  uncoloredResultItem = uncoloredItem;
+                  break;
                 }
-
-                return InteractionResult.SUCCESS;
               }
+            }
+
+            if (uncoloredResultItem != null) {
+              if (!level.isClientSide()) {
+                final ItemStack washed = itemStack.transmuteCopy(uncoloredResultItem, 1);
+                player.setItemInHand(
+                    interactionHand,
+                    ItemUtils.createFilledResult(itemStack, player, washed, false));
+                LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
+              }
+
+              return InteractionResult.SUCCESS;
             }
 
             return InteractionResult.TRY_WITH_EMPTY_HAND;

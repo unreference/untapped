@@ -4,8 +4,11 @@ import com.github.unreference.underutilized.tags.UnderutilizedItemTags;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import net.minecraft.Util;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -22,5 +25,23 @@ public final class UnderutilizedCauldronWashableHolder {
             map.put(UnderutilizedItemTags.STAINED_GLASS, Items.GLASS);
             map.put(UnderutilizedItemTags.STAINED_GLASS_PANES, Items.GLASS_PANE);
             // TODO: Glazed terracotta -> terracotta (white glazed terracotta -> white terracotta)
+          });
+
+  public static final Map<Item, Item> WASHABLE_GLAZED_TERRACOTTA =
+      Util.make(
+          Maps.newHashMap(),
+          map -> {
+            for (DyeColor color : DyeColor.values()) {
+              final Item glazedTerracotta =
+                  BuiltInRegistries.ITEM.getValue(
+                      ResourceLocation.withDefaultNamespace(
+                          color.getName() + "_glazed_terracotta"));
+
+              final Item terracotta =
+                  BuiltInRegistries.ITEM.getValue(
+                      ResourceLocation.withDefaultNamespace(color.getName() + "_terracotta"));
+
+              map.put(glazedTerracotta, terracotta);
+            }
           });
 }

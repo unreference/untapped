@@ -34,7 +34,7 @@ public abstract class UnderutilizedMixinLayeredCauldronBlock extends AbstractCau
       BlockHitResult blockHitResult) {
     if (itemStack.is(Items.HONEY_BOTTLE)) {
       return UnderutilizedHoneyCauldronBlock.fillWithHoney(
-          blockState, level, blockPos, player, interactionHand);
+          blockState, level, blockPos, player, interactionHand, itemStack);
     }
 
     return super.useItemOn(
