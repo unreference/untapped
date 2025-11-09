@@ -4,11 +4,8 @@
   "package": "com.github.unreference.untapped.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "core.cauldron.UntappedMixinCauldronInteraction",
-    "world.item.UntappedMixinBlockItem",
     "world.level.block.UntappedMixinCauldronBlock",
-    "world.level.block.UntappedMixinLayeredCauldronBlock",
-    "world.level.block.UntappedMxinLavaCauldronBlock"
+    "world.level.block.UntappedMixinLayeredCauldronBlock"
   ],
   "injectors": {
     "defaultRequire": 1

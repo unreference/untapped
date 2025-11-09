@@ -37,7 +37,7 @@ public final class UntappedHoneyCauldronBlockEntity extends BlockEntity {
 
     honeyCauldronBlockEntity.tickDelay = 0;
 
-    final int currentHoneyLevel = blockState.getValue(UntappedHoneyCauldronBlock.HONEY_LEVEL);
+    final int currentHoneyLevel = blockState.getValue(UntappedHoneyCauldronBlock.LEVEL);
     if (currentHoneyLevel == 3) {
       return;
     }
@@ -58,16 +58,14 @@ public final class UntappedHoneyCauldronBlockEntity extends BlockEntity {
           cauldronBlockPos,
           UntappedBlocks.HONEY_CAULDRON
               .defaultBlockState()
-              .setValue(UntappedHoneyCauldronBlock.HONEY_LEVEL, 1),
+              .setValue(UntappedHoneyCauldronBlock.LEVEL, 1),
           Block.UPDATE_ALL);
     } else if (cauldronBlockState.is(UntappedBlocks.HONEY_CAULDRON)) {
-      final int currentHoneyLevel =
-          cauldronBlockState.getValue(UntappedHoneyCauldronBlock.HONEY_LEVEL);
+      final int currentHoneyLevel = cauldronBlockState.getValue(UntappedHoneyCauldronBlock.LEVEL);
       if (currentHoneyLevel != 3) {
         level.setBlock(
             cauldronBlockPos,
-            cauldronBlockState.setValue(
-                UntappedHoneyCauldronBlock.HONEY_LEVEL, currentHoneyLevel + 1),
+            cauldronBlockState.setValue(UntappedHoneyCauldronBlock.LEVEL, currentHoneyLevel + 1),
             Block.UPDATE_ALL);
       }
     } else {

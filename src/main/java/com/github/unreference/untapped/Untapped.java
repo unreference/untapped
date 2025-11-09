@@ -1,5 +1,6 @@
 package com.github.unreference.untapped;
 
+import com.github.unreference.untapped.core.cauldron.UntappedCauldronInteraction;
 import com.github.unreference.untapped.world.level.block.UntappedBlocks;
 import com.github.unreference.untapped.world.level.block.entity.UntappedBlockEntityType;
 import net.fabricmc.api.ModInitializer;
@@ -11,5 +12,6 @@ public class Untapped implements ModInitializer {
   public void onInitialize() {
     UntappedBlocks.initialize();
     UntappedBlockEntityType.initialize();
+    UntappedCauldronInteraction.initialize();
   }
 }

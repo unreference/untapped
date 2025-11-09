@@ -2,8 +2,8 @@ package com.github.unreference.untapped.world.level.block;
 
 import com.github.unreference.untapped.world.level.block.entity.UntappedFrozenCauldronBlockEntity;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -17,28 +17,19 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public final class UntappedFrozenCauldronBlock extends BaseEntityBlock {
-  private static final VoxelShape CAULDRON_INNER_SHAPE = Block.column(12.0, 4.0, 16.0);
-  private static final VoxelShape CAULDRON_WALLS_SHAPE =
-      Util.make(
-          () ->
-              Shapes.join(
-                  Shapes.block(),
-                  Shapes.or(
-                      CAULDRON_INNER_SHAPE,
-                      Block.column(16.0, 8.0, 0.0, 3.0),
-                      Block.column(8.0, 16.0, 0.0, 3.0),
-                      Block.column(12.0, 0.0, 3.0)),
-                  BooleanOp.ONLY_FIRST));
+public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock
+    implements EntityBlock {
+  private static final MapCodec<UntappedFrozenCauldronBlock> CODEC =
+      simpleCodec(UntappedFrozenCauldronBlock::new);
+
+  private static final VoxelShape SHAPE_INSIDE = Block.column(12.0, 4.0, 16.0);
 
   public UntappedFrozenCauldronBlock(Properties properties) {
-    super(properties);
+    super(properties, CauldronInteraction.EMPTY);
   }
 
   private static void showParticles(Entity entity, int amount) {
@@ -69,11 +60,6 @@ public final class UntappedFrozenCauldronBlock extends BaseEntityBlock {
   }
 
   @Override
-  protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
-    return simpleCodec(UntappedFrozenCauldronBlock::new);
-  }
-
-  @Override
   public @NotNull BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
     return new UntappedFrozenCauldronBlockEntity(blockPos, blockState);
   }
@@ -89,19 +75,24 @@ public final class UntappedFrozenCauldronBlock extends BaseEntityBlock {
       BlockGetter blockGetter,
       BlockPos blockPos,
       CollisionContext collisionContext) {
-    return CAULDRON_INNER_SHAPE;
+    return SHAPE_INSIDE;
   }
 
   @Override
   protected @NotNull VoxelShape getInteractionShape(
       BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-    return CAULDRON_INNER_SHAPE;
+    return SHAPE_INSIDE;
+  }
+
+  @Override
+  public boolean isFull(BlockState blockState) {
+    return true;
   }
 
   @Override
   protected @NotNull VoxelShape getEntityInsideCollisionShape(
       BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Entity entity) {
-    return CAULDRON_WALLS_SHAPE;
+    return SHAPE;
   }
 
   @Override
@@ -111,12 +102,17 @@ public final class UntappedFrozenCauldronBlock extends BaseEntityBlock {
   }
 
   @Override
+  protected @NotNull MapCodec<? extends AbstractCauldronBlock> codec() {
+    return CODEC;
+  }
+
+  @Override
   protected @NotNull VoxelShape getShape(
       BlockState blockState,
       BlockGetter blockGetter,
       BlockPos blockPos,
       CollisionContext collisionContext) {
-    return CAULDRON_WALLS_SHAPE;
+    return SHAPE;
   }
 
   @Override

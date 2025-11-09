@@ -43,7 +43,7 @@ public final class UntappedModelProvider extends FabricModelProvider {
     blockStateModelGenerator.blockStateOutput.accept(
         MultiVariantGenerator.dispatch(UntappedBlocks.HONEY_CAULDRON)
             .with(
-                PropertyDispatch.initial(UntappedHoneyCauldronBlock.HONEY_LEVEL)
+                PropertyDispatch.initial(UntappedHoneyCauldronBlock.LEVEL)
                     .select(1, BlockModelGenerators.plainVariant(level1Model))
                     .select(2, BlockModelGenerators.plainVariant(level2Model))
                     .select(3, BlockModelGenerators.plainVariant(fullModel))));

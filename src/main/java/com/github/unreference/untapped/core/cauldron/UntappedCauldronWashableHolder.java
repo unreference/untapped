@@ -24,7 +24,6 @@ public final class UntappedCauldronWashableHolder {
             map.put(ItemTags.TERRACOTTA, Items.TERRACOTTA);
             map.put(UntappedItemTagsProvider.STAINED_GLASS, Items.GLASS);
             map.put(UntappedItemTagsProvider.STAINED_GLASS_PANES, Items.GLASS_PANE);
-            // TODO: Glazed terracotta -> terracotta (white glazed terracotta -> white terracotta)
           });
 
   public static final Map<Item, Item> WASHABLE_GLAZED_TERRACOTTA =
