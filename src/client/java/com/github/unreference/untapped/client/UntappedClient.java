@@ -13,6 +13,8 @@ public class UntappedClient implements ClientModInitializer {
     // TODO: Possibly custom renderers to prevent inner cauldron being translucent
     BlockRenderLayerMap.putBlock(UntappedBlocks.HONEY_CAULDRON, ChunkSectionLayer.TRANSLUCENT);
     BlockRenderLayerMap.putBlock(UntappedBlocks.FROZEN_CAULDRON, ChunkSectionLayer.TRANSLUCENT);
+
+    // TODO: Fix bug where potion falls back to base potion color
     BlockRenderLayerMap.putBlock(UntappedBlocks.POTION_CAULDRON, ChunkSectionLayer.TRANSLUCENT);
   }
 

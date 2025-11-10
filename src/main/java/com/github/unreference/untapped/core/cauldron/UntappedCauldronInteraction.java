@@ -2,7 +2,7 @@ package com.github.unreference.untapped.core.cauldron;
 
 import com.github.unreference.untapped.world.item.UntappedItemUtils;
 import com.github.unreference.untapped.world.level.block.UntappedBlocks;
-import com.github.unreference.untapped.world.level.block.UntappedHoneyCauldronBlock;
+import com.github.unreference.untapped.world.level.block.UntappedPotionCauldronBlock;
 import com.github.unreference.untapped.world.level.block.entity.UntappedPotionCauldronBlockEntity;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.Map;
@@ -25,6 +25,7 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -77,7 +78,7 @@ public final class UntappedCauldronInteraction {
       InteractionHand interactionHand,
       ItemStack itemStack) {
     if (blockState.is(UntappedBlocks.HONEY_CAULDRON)
-        && blockState.getValue(UntappedHoneyCauldronBlock.LEVEL) == 3) {
+        && blockState.getValue(LayeredCauldronBlock.LEVEL) == 3) {
       return InteractionResult.PASS;
     }
 
@@ -91,14 +92,14 @@ public final class UntappedCauldronInteraction {
       BlockState newBlockState;
 
       if (blockState.is(UntappedBlocks.HONEY_CAULDRON)) {
-        final IntegerProperty honeyLevel = UntappedHoneyCauldronBlock.LEVEL;
+        final IntegerProperty honeyLevel = LayeredCauldronBlock.LEVEL;
         final Integer currentHoneyLevel = blockState.getValue(honeyLevel);
         newBlockState = blockState.setValue(honeyLevel, currentHoneyLevel + 1);
       } else {
         newBlockState =
             UntappedBlocks.HONEY_CAULDRON
                 .defaultBlockState()
-                .setValue(UntappedHoneyCauldronBlock.LEVEL, 1);
+                .setValue(LayeredCauldronBlock.LEVEL, 1);
       }
 
       level.setBlock(blockPos, newBlockState, Block.UPDATE_ALL);
@@ -108,20 +109,71 @@ public final class UntappedCauldronInteraction {
     return InteractionResult.SUCCESS;
   }
 
-  private static void addCauldronInteractions() {
-    addDyeableInteractions();
-    addHoneyCauldronInteractions();
-    addPotionCauldronInteractions();
-  }
-
   private static void addPotionCauldronInteractions() {
     final Map<Item, CauldronInteraction> map = POTION.map();
     CauldronInteraction.addDefaultInteractions(map);
     CauldronInteraction.EMPTY
         .map()
         .put(Items.POTION, UntappedCauldronInteraction::fillPotionInteraction);
+    CauldronInteraction.EMPTY
+        .map()
+        .put(Items.LINGERING_POTION, UntappedCauldronInteraction::fillPotionInteraction);
+    CauldronInteraction.EMPTY
+        .map()
+        .put(Items.SPLASH_POTION, UntappedCauldronInteraction::fillPotionInteraction);
     map.put(Items.POTION, UntappedCauldronInteraction::fillPotionInteraction);
+    map.put(Items.LINGERING_POTION, UntappedCauldronInteraction::fillPotionInteraction);
+    map.put(Items.SPLASH_POTION, UntappedCauldronInteraction::fillPotionInteraction);
     map.put(Items.GLASS_BOTTLE, UntappedCauldronInteraction::takePotionInteraction);
+    map.put(Items.ARROW, UntappedCauldronInteraction::dipArrowInteraction);
+  }
+
+  private static InteractionResult dipArrowInteraction(
+      BlockState blockState,
+      Level level,
+      BlockPos blockPos,
+      Player player,
+      InteractionHand interactionHand,
+      ItemStack itemStack) {
+    if (!level.isClientSide()) {
+      if (level.getBlockEntity(blockPos)
+          instanceof UntappedPotionCauldronBlockEntity potionCauldronBlockEntity) {
+        if (potionCauldronBlockEntity.getEffect().isEmpty()) {
+          return InteractionResult.PASS;
+        }
+
+        final int cauldronLevel = blockState.getValue(LayeredCauldronBlock.LEVEL);
+        final int maxArrowsPerLevel = (cauldronLevel == 3) ? 64 : (cauldronLevel == 2) ? 32 : 16;
+        final int arrowsToConvert = Math.min(itemStack.getCount(), maxArrowsPerLevel);
+
+        if (arrowsToConvert <= 0) {
+          return InteractionResult.PASS;
+        }
+
+        final ItemStack tippedArrow = new ItemStack(Items.TIPPED_ARROW, arrowsToConvert);
+        potionCauldronBlockEntity.saveEffectToItem(tippedArrow);
+
+        player.setItemInHand(
+            interactionHand,
+            UntappedItemUtils.convertItemInHand(player, itemStack, tippedArrow, arrowsToConvert));
+        player.awardStat(Stats.USE_CAULDRON);
+        player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
+
+        final int consumedLevels = Math.min(cauldronLevel, (arrowsToConvert + 15) / 16);
+        final int newLevel = cauldronLevel - consumedLevels;
+
+        if (newLevel > 0) {
+          level.setBlock(
+              blockPos,
+              blockState.setValue(LayeredCauldronBlock.LEVEL, newLevel),
+              Block.UPDATE_ALL);
+        } else {
+          level.setBlock(blockPos, Blocks.CAULDRON.defaultBlockState(), Block.UPDATE_ALL);
+        }
+      }
+    }
+
+    return InteractionResult.SUCCESS;
   }
 
   private static InteractionResult takePotionInteraction(
@@ -139,7 +191,7 @@ public final class UntappedCauldronInteraction {
         }
 
         final ItemStack newPotionStack = new ItemStack(Items.POTION);
-        potionCauldronBlockEntity.saveToItem(newPotionStack);
+        potionCauldronBlockEntity.saveEffectToItem(newPotionStack);
 
         player.setItemInHand(
             interactionHand,
@@ -147,7 +199,7 @@ public final class UntappedCauldronInteraction {
         player.awardStat(Stats.USE_CAULDRON);
         player.awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
 
-        LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
+        UntappedPotionCauldronBlock.lowerFillLevel(blockState, level, blockPos);
         level.playSound(null, blockPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS);
         level.gameEvent(null, GameEvent.FLUID_PICKUP, blockPos);
       }
@@ -184,7 +236,7 @@ public final class UntappedCauldronInteraction {
 
         if (existingPotion.isPresent()
             && !existingPotion.get().equals(incomingPotionOptional.get())) {
-          return InteractionResult.FAIL;
+          return InteractionResult.PASS;
         }
 
         if (blockState.getValue(LayeredCauldronBlock.LEVEL) == 3) {
@@ -276,6 +328,8 @@ public final class UntappedCauldronInteraction {
   }
 
   public static void initialize() {
-    addCauldronInteractions();
+    addDyeableInteractions();
+    addHoneyCauldronInteractions();
+    addPotionCauldronInteractions();
   }
 }

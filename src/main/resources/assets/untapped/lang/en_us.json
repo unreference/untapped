@@ -1,6 +1,7 @@
 {
-  "block.untapped.honey_cauldron": "Honey Cauldron",
   "block.untapped.frozen_cauldron": "Frozen Cauldron",
+  "block.untapped.honey_cauldron": "Honey Cauldron",
+  "block.untapped.potion_cauldron": "Potion Cauldron",
   "tag.block.untapped.stained_glass": "Stained Glass",
   "tag.block.untapped.stained_glass_panes": "Stained Glass Panes",
   "tag.item.untapped.stained_glass": "Stained Glass",

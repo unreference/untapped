@@ -32,7 +32,7 @@ public final class UntappedBlocks {
           "potion_cauldron",
           UntappedPotionCauldronBlock::new,
           BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
-          true);
+          false);
 
   private static Block register(
       String name,

@@ -51,7 +51,7 @@ public final class UntappedPotionCauldronBlockEntity extends BlockEntity {
     return this.potionContents.getColor();
   }
 
-  public void saveToItem(ItemStack itemStack) {
+  public void saveEffectToItem(ItemStack itemStack) {
     itemStack.set(DataComponents.POTION_CONTENTS, this.potionContents);
   }
 
