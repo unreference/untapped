@@ -2,6 +2,7 @@ package com.github.unreference.untapped.world.level.block;
 
 import com.github.unreference.untapped.core.cauldron.UntappedCauldronInteraction;
 import com.github.unreference.untapped.world.level.block.entity.UntappedBlockEntityType;
+import com.github.unreference.untapped.world.level.block.entity.UntappedBlockEntityUtils;
 import com.github.unreference.untapped.world.level.block.entity.UntappedHoneyCauldronBlockEntity;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
@@ -68,14 +69,6 @@ public final class UntappedHoneyCauldronBlock extends LayeredCauldronBlock imple
                 0.0);
       }
     }
-  }
-
-  private static <E extends BlockEntity, A extends BlockEntity>
-      BlockEntityTicker<A> createTickerHelper(
-          BlockEntityType<A> blockEntityType,
-          BlockEntityType<E> blockEntityType2,
-          BlockEntityTicker<? super E> blockEntityTicker) {
-    return blockEntityType2 == blockEntityType ? (BlockEntityTicker<A>) blockEntityTicker : null;
   }
 
   @Override
@@ -150,7 +143,7 @@ public final class UntappedHoneyCauldronBlock extends LayeredCauldronBlock imple
   @Override
   public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
       Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-    return createTickerHelper(
+    return UntappedBlockEntityUtils.createTickerHelper(
         blockEntityType,
         UntappedBlockEntityType.HONEY_CAULDRON,
         UntappedHoneyCauldronBlockEntity::tick);

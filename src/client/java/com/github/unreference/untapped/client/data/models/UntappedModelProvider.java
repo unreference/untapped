@@ -5,6 +5,7 @@ import com.github.unreference.untapped.client.data.models.model.UntappedTextureS
 import com.github.unreference.untapped.resources.UntappedResourceLocation;
 import com.github.unreference.untapped.world.level.block.UntappedBlocks;
 import com.github.unreference.untapped.world.level.block.UntappedHoneyCauldronBlock;
+import com.github.unreference.untapped.world.level.block.UntappedPotionCauldronBlock;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -73,6 +74,32 @@ public final class UntappedModelProvider extends FabricModelProvider {
         .put(UntappedTextureSlot.TRANSLUCENT_SIDE, honeySide);
   }
 
+  private static void createPotionCauldron(BlockModelGenerators blockStateModelGenerator) {
+    final TextureMapping texture =
+        TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still"));
+
+    final ResourceLocation level1Model =
+        UntappedResourceLocation.withDefaultNamespace("block/potion_cauldron_level1");
+    final ResourceLocation level2Model =
+        UntappedResourceLocation.withDefaultNamespace("block/potion_cauldron_level2");
+    final ResourceLocation fullModel =
+        UntappedResourceLocation.withDefaultNamespace("block/potion_cauldron_full");
+
+    ModelTemplates.CAULDRON_LEVEL1.create(
+        level1Model, texture, blockStateModelGenerator.modelOutput);
+    ModelTemplates.CAULDRON_LEVEL2.create(
+        level2Model, texture, blockStateModelGenerator.modelOutput);
+    ModelTemplates.CAULDRON_FULL.create(fullModel, texture, blockStateModelGenerator.modelOutput);
+
+    blockStateModelGenerator.blockStateOutput.accept(
+        MultiVariantGenerator.dispatch(UntappedBlocks.POTION_CAULDRON)
+            .with(
+                PropertyDispatch.initial(UntappedPotionCauldronBlock.LEVEL)
+                    .select(1, BlockModelGenerators.plainVariant(level1Model))
+                    .select(2, BlockModelGenerators.plainVariant(level2Model))
+                    .select(3, BlockModelGenerators.plainVariant(fullModel))));
+  }
+
   private static void createFrozenCauldron(BlockModelGenerators blockStateModelGenerator) {
     final Block frozenCauldron = UntappedBlocks.FROZEN_CAULDRON;
 
@@ -90,6 +117,7 @@ public final class UntappedModelProvider extends FabricModelProvider {
   public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
     createHoneyCauldron(blockStateModelGenerator);
     createFrozenCauldron(blockStateModelGenerator);
+    createPotionCauldron(blockStateModelGenerator);
   }
 
   @Override

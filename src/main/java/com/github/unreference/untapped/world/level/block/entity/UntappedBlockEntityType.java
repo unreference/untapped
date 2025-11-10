@@ -29,4 +29,10 @@ public final class UntappedBlockEntityType {
           "frozen_cauldron",
           UntappedFrozenCauldronBlockEntity::new,
           UntappedBlocks.FROZEN_CAULDRON);
+
+  public static final BlockEntityType<UntappedPotionCauldronBlockEntity> POTION_CAULDRON =
+      register(
+          "potion_cauldron",
+          UntappedPotionCauldronBlockEntity::new,
+          UntappedBlocks.POTION_CAULDRON);
 }

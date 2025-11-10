@@ -1,4 +1,4 @@
-package com.github.unreference.untapped.util;
+package com.github.unreference.untapped.world.item;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

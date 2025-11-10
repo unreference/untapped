@@ -27,6 +27,13 @@ public final class UntappedBlocks {
           BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
           false);
 
+  public static final Block POTION_CAULDRON =
+      register(
+          "potion_cauldron",
+          UntappedPotionCauldronBlock::new,
+          BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
+          true);
+
   private static Block register(
       String name,
       Function<BlockBehaviour.Properties, Block> blockFunction,
