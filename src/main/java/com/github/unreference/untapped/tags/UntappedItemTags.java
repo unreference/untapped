@@ -5,7 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
-public final class UntappedItemTagsProvider {
+public final class UntappedItemTags {
   public static final TagKey<Item> STAINED_GLASS = bind("stained_glass");
   public static final TagKey<Item> STAINED_GLASS_PANES = bind("stained_glass_panes");
 

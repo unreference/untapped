@@ -1,6 +1,6 @@
 package com.github.unreference.untapped.core.cauldron;
 
-import com.github.unreference.untapped.tags.UntappedItemTagsProvider;
+import com.github.unreference.untapped.tags.UntappedItemTags;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import net.minecraft.Util;
@@ -22,8 +22,9 @@ public final class UntappedCauldronWashableHolder {
             map.put(ItemTags.BEDS, Items.WHITE_BED);
             map.put(ItemTags.CANDLES, Items.CANDLE);
             map.put(ItemTags.TERRACOTTA, Items.TERRACOTTA);
-            map.put(UntappedItemTagsProvider.STAINED_GLASS, Items.GLASS);
-            map.put(UntappedItemTagsProvider.STAINED_GLASS_PANES, Items.GLASS_PANE);
+            map.put(UntappedItemTags.STAINED_GLASS, Items.GLASS);
+            map.put(UntappedItemTags.STAINED_GLASS_PANES, Items.GLASS_PANE);
+            map.put(ItemTags.BUNDLES, Items.BUNDLE);
           });
 
   public static final Map<Item, Item> WASHABLE_GLAZED_TERRACOTTA =

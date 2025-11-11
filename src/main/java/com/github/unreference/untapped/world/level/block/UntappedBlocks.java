@@ -34,6 +34,13 @@ public final class UntappedBlocks {
           BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
           false);
 
+  public static final Block DYED_WATER_CAULDRON =
+      register(
+          "dyed_water_cauldron",
+          UntappedDyedWaterCauldronBlock::new,
+          BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
+          false);
+
   private static Block register(
       String name,
       Function<BlockBehaviour.Properties, Block> blockFunction,

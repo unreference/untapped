@@ -56,7 +56,10 @@ public final class UntappedBlockTagsProvider extends FabricTagProvider.BlockTagP
             Blocks.BLACK_STAINED_GLASS_PANE);
 
     this.valueLookupBuilder(BlockTags.CAULDRONS)
-        .add(UntappedBlocks.HONEY_CAULDRON)
-        .add(UntappedBlocks.FROZEN_CAULDRON);
+        .add(
+            UntappedBlocks.HONEY_CAULDRON,
+            UntappedBlocks.FROZEN_CAULDRON,
+            UntappedBlocks.POTION_CAULDRON,
+            UntappedBlocks.DYED_WATER_CAULDRON);
   }
 }

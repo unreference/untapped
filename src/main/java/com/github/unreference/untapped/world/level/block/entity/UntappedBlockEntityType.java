@@ -35,4 +35,10 @@ public final class UntappedBlockEntityType {
           "potion_cauldron",
           UntappedPotionCauldronBlockEntity::new,
           UntappedBlocks.POTION_CAULDRON);
+
+  public static final BlockEntityType<UntappedDyedWaterCauldronEntity> DYED_WATER_CAULDRON =
+      register(
+          "dyed_water_cauldron",
+          UntappedDyedWaterCauldronEntity::new,
+          UntappedBlocks.DYED_WATER_CAULDRON);
 }

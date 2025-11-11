@@ -64,6 +64,7 @@ public final class UntappedPotionCauldronBlock extends LayeredCauldronBlock impl
       Entity entity,
       InsideBlockEffectApplier insideBlockEffectApplier,
       boolean bl) {
+    super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
     if (level.isClientSide()) {
       return;
     }
@@ -75,12 +76,12 @@ public final class UntappedPotionCauldronBlock extends LayeredCauldronBlock impl
     if (level.getBlockEntity(blockPos)
         instanceof UntappedPotionCauldronBlockEntity potionCauldronBlockEntity) {
       potionCauldronBlockEntity
-          .getEffect()
-          .ifPresent(
+          .getAllEffects()
+          .forEach(
               effect -> {
-                final int duration = effect.getDuration() * blockState.getValue(LEVEL);
                 livingEntity.addEffect(
-                    new MobEffectInstance(effect.getEffect(), duration, effect.getAmplifier()));
+                    new MobEffectInstance(
+                        effect.getEffect(), effect.getDuration(), effect.getAmplifier()));
               });
 
       LayeredCauldronBlock.lowerFillLevel(blockState, level, blockPos);
