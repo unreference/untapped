@@ -16,6 +16,8 @@ public class UntappedClient implements ClientModInitializer {
     BlockRenderLayerMap.putBlock(UntappedBlocks.FROZEN_CAULDRON, ChunkSectionLayer.TRANSLUCENT);
     BlockRenderLayerMap.putBlock(UntappedBlocks.POTION_CAULDRON, ChunkSectionLayer.SOLID);
     BlockRenderLayerMap.putBlock(UntappedBlocks.DYED_WATER_CAULDRON, ChunkSectionLayer.TRANSLUCENT);
+    BlockRenderLayerMap.putBlock(UntappedBlocks.SLIME_CAULDRON, ChunkSectionLayer.TRANSLUCENT);
+    BlockRenderLayerMap.putBlock(UntappedBlocks.MAGMA_CAULDRON, ChunkSectionLayer.SOLID);
   }
 
   private static void registerBlockColorHandlers() {

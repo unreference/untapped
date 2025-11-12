@@ -1,35 +1,26 @@
 package com.github.unreference.untapped.world.level.block;
 
 import com.github.unreference.untapped.core.cauldron.UntappedCauldronInteraction;
-import com.github.unreference.untapped.world.level.block.entity.UntappedBlockEntityType;
-import com.github.unreference.untapped.world.level.block.entity.UntappedBlockEntityUtils;
-import com.github.unreference.untapped.world.level.block.entity.UntappedHoneyCauldronBlockEntity;
 import com.github.unreference.untapped.world.level.block.state.properties.UntappedBlockStateProperties;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public final class UntappedHoneyCauldronBlock extends UntappedAbstractFourLayeredCauldronBlock
-    implements EntityBlock {
-  public static final IntegerProperty LEVEL = UntappedBlockStateProperties.LEVEL_HONEY_CAULDRON;
-  public static final MapCodec<UntappedHoneyCauldronBlock> CODEC =
-      simpleCodec(UntappedHoneyCauldronBlock::new);
-
+public final class UntappedSlimeCauldronBlock extends UntappedAbstractFourLayeredCauldronBlock {
+  public static final IntegerProperty LEVEL = UntappedBlockStateProperties.LEVEL_SLIME_CAULDRON;
+  public static final MapCodec<UntappedSlimeCauldronBlock> CODEC =
+      simpleCodec(UntappedSlimeCauldronBlock::new);
   private static final double HEIGHT_PER_LEVEL = 3.0;
 
-  private static final VoxelShape[] HONEY_FILLED_SHAPES =
+  private static final VoxelShape[] SLIME_FILLED_SHAPES =
       Util.make(
           new VoxelShape[MAX_FILL_LEVEL],
           (shapes) -> {
@@ -44,12 +35,12 @@ public final class UntappedHoneyCauldronBlock extends UntappedAbstractFourLayere
           new VoxelShape[MAX_FILL_LEVEL],
           (shapes) -> {
             for (int i = 0; i < shapes.length; i++) {
-              shapes[i] = Shapes.or(AbstractCauldronBlock.SHAPE, HONEY_FILLED_SHAPES[i]);
+              shapes[i] = Shapes.or(AbstractCauldronBlock.SHAPE, SLIME_FILLED_SHAPES[i]);
             }
           });
 
-  public UntappedHoneyCauldronBlock(Properties properties) {
-    super(properties, UntappedCauldronInteraction.HONEY);
+  public UntappedSlimeCauldronBlock(Properties properties) {
+    super(properties, UntappedCauldronInteraction.SLIME);
     this.registerDefaultState(this.getStateDefinition().any().setValue(LEVEL, MIN_FILL_LEVEL));
   }
 
@@ -70,7 +61,7 @@ public final class UntappedHoneyCauldronBlock extends UntappedAbstractFourLayere
 
   @Override
   protected VoxelShape[] getLiquidShapes() {
-    return HONEY_FILLED_SHAPES;
+    return SLIME_FILLED_SHAPES;
   }
 
   @Override
@@ -81,19 +72,5 @@ public final class UntappedHoneyCauldronBlock extends UntappedAbstractFourLayere
   @Override
   protected @NotNull MapCodec<? extends UntappedAbstractFourLayeredCauldronBlock> codec() {
     return CODEC;
-  }
-
-  @Override
-  public @NotNull BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-    return new UntappedHoneyCauldronBlockEntity(blockPos, blockState);
-  }
-
-  @Override
-  public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(
-      Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-    return UntappedBlockEntityUtils.createTickerHelper(
-        blockEntityType,
-        UntappedBlockEntityType.HONEY_CAULDRON,
-        UntappedHoneyCauldronBlockEntity::tick);
   }
 }

@@ -1,6 +1,5 @@
 package com.github.unreference.untapped.world.level.block;
 
-import com.github.unreference.untapped.world.level.block.entity.UntappedFrozenCauldronBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -15,14 +14,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock
-    implements EntityBlock {
+public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock {
   private static final MapCodec<UntappedFrozenCauldronBlock> CODEC =
       simpleCodec(UntappedFrozenCauldronBlock::new);
 
@@ -57,11 +54,6 @@ public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock
 
   private static BlockState meltsInto() {
     return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3);
-  }
-
-  @Override
-  public @NotNull BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-    return new UntappedFrozenCauldronBlockEntity(blockPos, blockState);
   }
 
   @Override

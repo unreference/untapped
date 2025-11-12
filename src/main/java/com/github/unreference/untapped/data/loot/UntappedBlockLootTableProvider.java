@@ -16,5 +16,10 @@ public final class UntappedBlockLootTableProvider extends FabricBlockLootTablePr
   @Override
   public void generate() {
     this.dropOther(UntappedBlocks.HONEY_CAULDRON, Blocks.CAULDRON);
+    this.dropOther(UntappedBlocks.FROZEN_CAULDRON, Blocks.CAULDRON);
+    this.dropOther(UntappedBlocks.POTION_CAULDRON, Blocks.CAULDRON);
+    this.dropOther(UntappedBlocks.DYED_WATER_CAULDRON, Blocks.CAULDRON);
+    this.dropOther(UntappedBlocks.SLIME_CAULDRON, Blocks.CAULDRON);
+    this.dropOther(UntappedBlocks.MAGMA_CAULDRON, Blocks.CAULDRON);
   }
 }

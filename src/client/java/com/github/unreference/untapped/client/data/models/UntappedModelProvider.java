@@ -3,19 +3,16 @@ package com.github.unreference.untapped.client.data.models;
 import com.github.unreference.untapped.client.data.models.model.UntappedModelTemplates;
 import com.github.unreference.untapped.client.data.models.model.UntappedTextureSlot;
 import com.github.unreference.untapped.resources.UntappedResourceLocation;
-import com.github.unreference.untapped.world.level.block.UntappedBlocks;
-import com.github.unreference.untapped.world.level.block.UntappedDyedWaterCauldronBlock;
-import com.github.unreference.untapped.world.level.block.UntappedHoneyCauldronBlock;
-import com.github.unreference.untapped.world.level.block.UntappedPotionCauldronBlock;
+import com.github.unreference.untapped.world.level.block.*;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -26,65 +23,63 @@ public final class UntappedModelProvider extends FabricModelProvider {
   }
 
   private static void createHoneyCauldron(BlockModelGenerators blockStateModelGenerator) {
-    final TextureMapping textures = createHoneyCauldronTextures();
+    final Block block = UntappedBlocks.HONEY_CAULDRON;
+    final TextureMapping textures = createFourLayeredCauldronTextures(Blocks.HONEY_BLOCK, true);
+    final String location = ModelLocationUtils.getModelLocation(block).getPath();
 
     final ResourceLocation level1Model =
-        UntappedResourceLocation.withDefaultNamespace("block/honey_cauldron_level1");
+        UntappedResourceLocation.withDefaultNamespace(location + "_level1");
     final ResourceLocation level2Model =
-        UntappedResourceLocation.withDefaultNamespace("block/honey_cauldron_level2");
+        UntappedResourceLocation.withDefaultNamespace(location + "_level2");
+    final ResourceLocation level3Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level3");
     final ResourceLocation fullModel =
-        UntappedResourceLocation.withDefaultNamespace("block/honey_cauldron_full");
+        UntappedResourceLocation.withDefaultNamespace(location + "_full");
 
-    UntappedModelTemplates.TRANSLUCENT_CAULDRON_LEVEL1.create(
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL1.create(
         level1Model, textures, blockStateModelGenerator.modelOutput);
-    UntappedModelTemplates.TRANSLUCENT_CAULDRON_LEVEL_2.create(
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL2.create(
         level2Model, textures, blockStateModelGenerator.modelOutput);
-    UntappedModelTemplates.TRANSLUCENT_CAULDRON_FULL.create(
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL3.create(
+        level3Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_FULL.create(
         fullModel, textures, blockStateModelGenerator.modelOutput);
 
     blockStateModelGenerator.blockStateOutput.accept(
-        MultiVariantGenerator.dispatch(UntappedBlocks.HONEY_CAULDRON)
+        MultiVariantGenerator.dispatch(block)
             .with(
                 PropertyDispatch.initial(UntappedHoneyCauldronBlock.LEVEL)
                     .select(1, BlockModelGenerators.plainVariant(level1Model))
                     .select(2, BlockModelGenerators.plainVariant(level2Model))
-                    .select(3, BlockModelGenerators.plainVariant(fullModel))));
+                    .select(3, BlockModelGenerators.plainVariant(level3Model))
+                    .select(4, BlockModelGenerators.plainVariant(fullModel))));
   }
 
-  private static TextureMapping createHoneyCauldronTextures() {
-    final Block cauldron = Blocks.CAULDRON;
-    final Block honeyBlock = Blocks.HONEY_BLOCK;
+  private static void createFrozenCauldron(BlockModelGenerators blockStateModelGenerator) {
+    final Block frozenCauldron = UntappedBlocks.FROZEN_CAULDRON;
 
-    final ResourceLocation cauldronSide = TextureMapping.getBlockTexture(cauldron, "_side");
-    final ResourceLocation cauldronTop = TextureMapping.getBlockTexture(cauldron, "_top");
-    final ResourceLocation cauldronBottom = TextureMapping.getBlockTexture(cauldron, "_bottom");
-    final ResourceLocation cauldronInner = TextureMapping.getBlockTexture(cauldron, "_inner");
-
-    final ResourceLocation honeyTop = TextureMapping.getBlockTexture(honeyBlock, "_top");
-    final ResourceLocation honeyBottom = TextureMapping.getBlockTexture(honeyBlock, "_bottom");
-    final ResourceLocation honeySide = TextureMapping.getBlockTexture(honeyBlock, "_side");
-
-    return new TextureMapping()
-        .put(TextureSlot.PARTICLE, cauldronSide)
-        .put(TextureSlot.TOP, cauldronTop)
-        .put(TextureSlot.BOTTOM, cauldronBottom)
-        .put(TextureSlot.SIDE, cauldronSide)
-        .put(TextureSlot.INSIDE, cauldronInner)
-        .put(UntappedTextureSlot.TRANSLUCENT_TOP, honeyTop)
-        .put(UntappedTextureSlot.TRANSLUCENT_BOTTOM, honeyBottom)
-        .put(UntappedTextureSlot.TRANSLUCENT_SIDE, honeySide);
+    blockStateModelGenerator.blockStateOutput.accept(
+        BlockModelGenerators.createSimpleBlock(
+            frozenCauldron,
+            BlockModelGenerators.plainVariant(
+                ModelTemplates.CAULDRON_FULL.create(
+                    frozenCauldron,
+                    TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.ICE)),
+                    blockStateModelGenerator.modelOutput))));
   }
 
   private static void createPotionCauldron(BlockModelGenerators blockStateModelGenerator) {
+    final Block block = UntappedBlocks.POTION_CAULDRON;
     final TextureMapping texture =
         TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still"));
+    final String location = ModelLocationUtils.getModelLocation(block).getPath();
 
     final ResourceLocation level1Model =
-        UntappedResourceLocation.withDefaultNamespace("block/potion_cauldron_level1");
+        UntappedResourceLocation.withDefaultNamespace(location + "_level1");
     final ResourceLocation level2Model =
-        UntappedResourceLocation.withDefaultNamespace("block/potion_cauldron_level2");
+        UntappedResourceLocation.withDefaultNamespace(location + "_level2");
     final ResourceLocation fullModel =
-        UntappedResourceLocation.withDefaultNamespace("block/potion_cauldron_full");
+        UntappedResourceLocation.withDefaultNamespace(location + "_full");
 
     ModelTemplates.CAULDRON_LEVEL1.create(
         level1Model, texture, blockStateModelGenerator.modelOutput);
@@ -101,37 +96,76 @@ public final class UntappedModelProvider extends FabricModelProvider {
                     .select(3, BlockModelGenerators.plainVariant(fullModel))));
   }
 
-  private static void createFrozenCauldron(BlockModelGenerators blockStateModelGenerator) {
-    final Block frozenCauldron = UntappedBlocks.FROZEN_CAULDRON;
-
-    blockStateModelGenerator.blockStateOutput.accept(
-        BlockModelGenerators.createSimpleBlock(
-            frozenCauldron,
-            BlockModelGenerators.plainVariant(
-                ModelTemplates.CAULDRON_FULL.create(
-                    frozenCauldron,
-                    TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.ICE)),
-                    blockStateModelGenerator.modelOutput))));
-  }
-
-  @Override
-  public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
-    createHoneyCauldron(blockStateModelGenerator);
-    createFrozenCauldron(blockStateModelGenerator);
-    createPotionCauldron(blockStateModelGenerator);
-    createDyedWaterCauldron(blockStateModelGenerator);
-  }
-
-  private void createDyedWaterCauldron(BlockModelGenerators blockStateModelGenerator) {
-    final TextureMapping texture =
-        TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still"));
+  private static void createSlimeCauldron(BlockModelGenerators blockStateModelGenerator) {
+    final Block block = UntappedBlocks.SLIME_CAULDRON;
+    final TextureMapping textures = createFourLayeredCauldronTextures(Blocks.SLIME_BLOCK, false);
+    final String location = ModelLocationUtils.getModelLocation(block).getPath();
 
     final ResourceLocation level1Model =
-        UntappedResourceLocation.withDefaultNamespace("block/dyed_water_cauldron_level1");
+        UntappedResourceLocation.withDefaultNamespace(location + "_level1");
     final ResourceLocation level2Model =
-        UntappedResourceLocation.withDefaultNamespace("block/dyed_water_cauldron_level2");
+        UntappedResourceLocation.withDefaultNamespace(location + "_level2");
+    final ResourceLocation level3Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level3");
     final ResourceLocation fullModel =
-        UntappedResourceLocation.withDefaultNamespace("block/dyed_water_cauldron_full");
+        UntappedResourceLocation.withDefaultNamespace(location + "_full");
+
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL1.create(
+        level1Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL2.create(
+        level2Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL3.create(
+        level3Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_FULL.create(
+        fullModel, textures, blockStateModelGenerator.modelOutput);
+
+    blockStateModelGenerator.blockStateOutput.accept(
+        MultiVariantGenerator.dispatch(block)
+            .with(
+                PropertyDispatch.initial(UntappedSlimeCauldronBlock.LEVEL)
+                    .select(1, BlockModelGenerators.plainVariant(level1Model))
+                    .select(2, BlockModelGenerators.plainVariant(level2Model))
+                    .select(3, BlockModelGenerators.plainVariant(level3Model))
+                    .select(4, BlockModelGenerators.plainVariant(fullModel))));
+  }
+
+  private static TextureMapping createFourLayeredCauldronTextures(
+      Block content, boolean isMultisided) {
+
+    final ResourceLocation contentTop =
+        isMultisided
+            ? TextureMapping.getBlockTexture(content, "_top")
+            : TextureMapping.getBlockTexture(content);
+    final ResourceLocation contentBottom =
+        isMultisided
+            ? TextureMapping.getBlockTexture(content, "_bottom")
+            : TextureMapping.getBlockTexture(content);
+
+    return new TextureMapping()
+        .put(UntappedTextureSlot.TRANSLUCENT_TOP, contentTop)
+        .put(UntappedTextureSlot.TRANSLUCENT_BOTTOM, contentBottom);
+  }
+
+  private static TextureMapping createMagmaCauldronTextures() {
+    final ResourceLocation content = ResourceLocation.withDefaultNamespace("block/magma");
+
+    return new TextureMapping()
+        .put(UntappedTextureSlot.TRANSLUCENT_TOP, content)
+        .put(UntappedTextureSlot.TRANSLUCENT_BOTTOM, content);
+  }
+
+  private static void createDyedWaterCauldron(BlockModelGenerators blockStateModelGenerator) {
+    final Block block = UntappedBlocks.DYED_WATER_CAULDRON;
+    final TextureMapping texture =
+        TextureMapping.cauldron(TextureMapping.getBlockTexture(Blocks.WATER, "_still"));
+    final String location = ModelLocationUtils.getModelLocation(block).getPath();
+
+    final ResourceLocation level1Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level1");
+    final ResourceLocation level2Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level2");
+    final ResourceLocation fullModel =
+        UntappedResourceLocation.withDefaultNamespace(location + "_full");
 
     ModelTemplates.CAULDRON_LEVEL1.create(
         level1Model, texture, blockStateModelGenerator.modelOutput);
@@ -140,12 +174,55 @@ public final class UntappedModelProvider extends FabricModelProvider {
     ModelTemplates.CAULDRON_FULL.create(fullModel, texture, blockStateModelGenerator.modelOutput);
 
     blockStateModelGenerator.blockStateOutput.accept(
-        MultiVariantGenerator.dispatch(UntappedBlocks.DYED_WATER_CAULDRON)
+        MultiVariantGenerator.dispatch(block)
             .with(
                 PropertyDispatch.initial(UntappedDyedWaterCauldronBlock.LEVEL)
                     .select(1, BlockModelGenerators.plainVariant(level1Model))
                     .select(2, BlockModelGenerators.plainVariant(level2Model))
                     .select(3, BlockModelGenerators.plainVariant(fullModel))));
+  }
+
+  private static void createMagmaCauldron(BlockModelGenerators blockStateModelGenerator) {
+    final Block block = UntappedBlocks.MAGMA_CAULDRON;
+    final TextureMapping textures = createMagmaCauldronTextures();
+    final String location = ModelLocationUtils.getModelLocation(block).getPath();
+
+    final ResourceLocation level1Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level1");
+    final ResourceLocation level2Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level2");
+    final ResourceLocation level3Model =
+        UntappedResourceLocation.withDefaultNamespace(location + "_level3");
+    final ResourceLocation fullModel =
+        UntappedResourceLocation.withDefaultNamespace(location + "_full");
+
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL1.create(
+        level1Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL2.create(
+        level2Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_LEVEL3.create(
+        level3Model, textures, blockStateModelGenerator.modelOutput);
+    UntappedModelTemplates.FOUR_LAYERED_CAULDRON_FULL.create(
+        fullModel, textures, blockStateModelGenerator.modelOutput);
+
+    blockStateModelGenerator.blockStateOutput.accept(
+        MultiVariantGenerator.dispatch(block)
+            .with(
+                PropertyDispatch.initial(UntappedMagmaCauldronBlock.LEVEL)
+                    .select(1, BlockModelGenerators.plainVariant(level1Model))
+                    .select(2, BlockModelGenerators.plainVariant(level2Model))
+                    .select(3, BlockModelGenerators.plainVariant(level3Model))
+                    .select(4, BlockModelGenerators.plainVariant(fullModel))));
+  }
+
+  @Override
+  public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
+    createHoneyCauldron(blockStateModelGenerator);
+    createFrozenCauldron(blockStateModelGenerator);
+    createPotionCauldron(blockStateModelGenerator);
+    createDyedWaterCauldron(blockStateModelGenerator);
+    createSlimeCauldron(blockStateModelGenerator);
+    createMagmaCauldron(blockStateModelGenerator);
   }
 
   @Override

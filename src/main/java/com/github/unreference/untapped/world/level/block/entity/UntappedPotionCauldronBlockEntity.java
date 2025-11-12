@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -81,6 +82,13 @@ public final class UntappedPotionCauldronBlockEntity extends BlockEntity
 
   public void savePotionContentsToItemStack(ItemStack itemStack) {
     itemStack.set(DataComponents.POTION_CONTENTS, this.potionContents);
+  }
+
+  public boolean isWater() {
+    return this.potionContents.is(Potions.WATER)
+        || this.potionContents.is(Potions.MUNDANE)
+        || this.potionContents.is(Potions.AWKWARD)
+        || this.potionContents.is(Potions.THICK);
   }
 
   @Override

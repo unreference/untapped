@@ -65,6 +65,7 @@ public final class UntappedPotionCauldronBlock extends LayeredCauldronBlock impl
       InsideBlockEffectApplier insideBlockEffectApplier,
       boolean bl) {
     super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
+
     if (level.isClientSide()) {
       return;
     }
@@ -75,6 +76,10 @@ public final class UntappedPotionCauldronBlock extends LayeredCauldronBlock impl
 
     if (level.getBlockEntity(blockPos)
         instanceof UntappedPotionCauldronBlockEntity potionCauldronBlockEntity) {
+      if (potionCauldronBlockEntity.isWater()) {
+        return;
+      }
+
       potionCauldronBlockEntity
           .getAllEffects()
           .forEach(

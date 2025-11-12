@@ -6,41 +6,29 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureSlot;
 
 public final class UntappedModelTemplates {
-  public static final ModelTemplate TRANSLUCENT_CAULDRON_LEVEL1 =
+  public static final ModelTemplate FOUR_LAYERED_CAULDRON_LEVEL1 =
       create(
-          "template_translucent_cauldron_level1",
-          TextureSlot.PARTICLE,
-          TextureSlot.TOP,
-          TextureSlot.BOTTOM,
-          TextureSlot.SIDE,
-          TextureSlot.INSIDE,
+          "template_four_layered_cauldron_level1",
           UntappedTextureSlot.TRANSLUCENT_TOP,
-          UntappedTextureSlot.TRANSLUCENT_BOTTOM,
-          UntappedTextureSlot.TRANSLUCENT_SIDE);
+          UntappedTextureSlot.TRANSLUCENT_BOTTOM);
 
-  public static final ModelTemplate TRANSLUCENT_CAULDRON_LEVEL_2 =
+  public static final ModelTemplate FOUR_LAYERED_CAULDRON_LEVEL2 =
       create(
-          "template_translucent_cauldron_level2",
-          TextureSlot.PARTICLE,
-          TextureSlot.TOP,
-          TextureSlot.BOTTOM,
-          TextureSlot.SIDE,
-          TextureSlot.INSIDE,
+          "template_four_layered_cauldron_level2",
           UntappedTextureSlot.TRANSLUCENT_TOP,
-          UntappedTextureSlot.TRANSLUCENT_BOTTOM,
-          UntappedTextureSlot.TRANSLUCENT_SIDE);
+          UntappedTextureSlot.TRANSLUCENT_BOTTOM);
 
-  public static final ModelTemplate TRANSLUCENT_CAULDRON_FULL =
+  public static final ModelTemplate FOUR_LAYERED_CAULDRON_LEVEL3 =
       create(
-          "template_translucent_cauldron_full",
-          TextureSlot.PARTICLE,
-          TextureSlot.TOP,
-          TextureSlot.BOTTOM,
-          TextureSlot.SIDE,
-          TextureSlot.INSIDE,
+          "template_four_layered_cauldron_level3",
           UntappedTextureSlot.TRANSLUCENT_TOP,
-          UntappedTextureSlot.TRANSLUCENT_BOTTOM,
-          UntappedTextureSlot.TRANSLUCENT_SIDE);
+          UntappedTextureSlot.TRANSLUCENT_BOTTOM);
+
+  public static final ModelTemplate FOUR_LAYERED_CAULDRON_FULL =
+      create(
+          "template_four_layered_cauldron_full",
+          UntappedTextureSlot.TRANSLUCENT_TOP,
+          UntappedTextureSlot.TRANSLUCENT_BOTTOM);
 
   private static ModelTemplate create(String name, TextureSlot... textureSlots) {
     return new ModelTemplate(

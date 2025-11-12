@@ -60,6 +60,8 @@ public final class UntappedBlockTagsProvider extends FabricTagProvider.BlockTagP
             UntappedBlocks.HONEY_CAULDRON,
             UntappedBlocks.FROZEN_CAULDRON,
             UntappedBlocks.POTION_CAULDRON,
-            UntappedBlocks.DYED_WATER_CAULDRON);
+            UntappedBlocks.DYED_WATER_CAULDRON,
+            UntappedBlocks.SLIME_CAULDRON,
+            UntappedBlocks.MAGMA_CAULDRON);
   }
 }

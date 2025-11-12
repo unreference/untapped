@@ -24,12 +24,6 @@ public final class UntappedBlockEntityType {
       register(
           "honey_cauldron", UntappedHoneyCauldronBlockEntity::new, UntappedBlocks.HONEY_CAULDRON);
 
-  public static final BlockEntityType<UntappedFrozenCauldronBlockEntity> FROZEN_CAULDRON =
-      register(
-          "frozen_cauldron",
-          UntappedFrozenCauldronBlockEntity::new,
-          UntappedBlocks.FROZEN_CAULDRON);
-
   public static final BlockEntityType<UntappedPotionCauldronBlockEntity> POTION_CAULDRON =
       register(
           "potion_cauldron",

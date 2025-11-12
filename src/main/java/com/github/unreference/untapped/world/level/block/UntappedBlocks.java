@@ -41,6 +41,20 @@ public final class UntappedBlocks {
           BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
           false);
 
+  public static final Block SLIME_CAULDRON =
+      register(
+          "slime_cauldron",
+          UntappedSlimeCauldronBlock::new,
+          BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
+          false);
+
+  public static final Block MAGMA_CAULDRON =
+      register(
+          "magma_cauldron",
+          UntappedMagmaCauldronBlock::new,
+          BlockBehaviour.Properties.ofFullCopy(Blocks.CAULDRON),
+          false);
+
   private static Block register(
       String name,
       Function<BlockBehaviour.Properties, Block> blockFunction,
