@@ -5,6 +5,8 @@
   "block.untapped.magma_cauldron": "Magma Cauldron",
   "block.untapped.potion_cauldron": "Potion Cauldron",
   "block.untapped.slime_cauldron": "Slime Cauldron",
+  "item.untapped.quiver": "Quiver",
+  "item.untapped.quiver.empty.description": "Can hold up to %s unique stacks of bow projectiles",
   "tag.block.untapped.stained_glass": "Stained Glass",
   "tag.block.untapped.stained_glass_panes": "Stained Glass Panes",
   "tag.item.untapped.stained_glass": "Stained Glass",

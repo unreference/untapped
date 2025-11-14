@@ -45,6 +45,8 @@ public final class UntappedCauldronInteraction {
       CauldronInteraction.newInteractionMap("slime");
   public static final CauldronInteraction.InteractionMap MAGMA =
       CauldronInteraction.newInteractionMap("magma");
+  public static final CauldronInteraction.InteractionMap FROZEN =
+      CauldronInteraction.newInteractionMap("frozen");
 
   // -------------------------------------------------------------------------------------------------------------------
   // Honey Cauldron
@@ -97,11 +99,15 @@ public final class UntappedCauldronInteraction {
       Player player,
       InteractionHand interactionHand,
       ItemStack itemStack) {
+    if (interactionHand.equals(InteractionHand.OFF_HAND)) {
+      return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
     if (!blockState.is(UntappedBlocks.HONEY_CAULDRON)) {
-      return InteractionResult.PASS;
+      return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
     if (blockState.getValue(UntappedHoneyCauldronBlock.LEVEL) <= 0) {
-      return InteractionResult.PASS;
+      return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
     if (level.isClientSide()) {
@@ -683,7 +689,7 @@ public final class UntappedCauldronInteraction {
     }
 
     level.setBlock(blockPos, newBlockState, Block.UPDATE_ALL);
-    level.playSound(null, blockPos, SoundEvents.SLIME_SQUISH_SMALL, SoundSource.BLOCKS);
+    level.playSound(null, blockPos, SoundEvents.SLIME_BLOCK_PLACE, SoundSource.BLOCKS);
     level.gameEvent(null, GameEvent.FLUID_PLACE, blockPos);
 
     return InteractionResult.SUCCESS;
@@ -784,6 +790,46 @@ public final class UntappedCauldronInteraction {
     return InteractionResult.SUCCESS;
   }
 
+  // -------------------------------------------------------------------------------------------------------------------
+  // Frozen Cauldron
+  // -------------------------------------------------------------------------------------------------------------------
+
+  private static void addFrozenCauldronInteractions() {
+    final Map<Item, CauldronInteraction> map = FROZEN.map();
+    map.put(Items.AIR, UntappedCauldronInteraction::takeIceInteraction);
+  }
+
+  private static InteractionResult takeIceInteraction(
+      BlockState blockState,
+      Level level,
+      BlockPos blockPos,
+      Player player,
+      InteractionHand interactionHand,
+      ItemStack itemStack) {
+    if (interactionHand.equals(InteractionHand.OFF_HAND)) {
+      return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    if (level.isClientSide()) {
+      return InteractionResult.SUCCESS;
+    }
+
+    if (!blockState.is(UntappedBlocks.FROZEN_CAULDRON)) {
+      return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    player.setItemInHand(
+        interactionHand,
+        ItemUtils.createFilledResult(itemStack, player, new ItemStack(Blocks.ICE)));
+    player.awardStat(Stats.USE_CAULDRON);
+    level.setBlock(blockPos, Blocks.CAULDRON.defaultBlockState(), Block.UPDATE_ALL);
+
+    level.playSound(null, blockPos, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS);
+    level.gameEvent(null, GameEvent.FLUID_PICKUP, blockPos);
+
+    return InteractionResult.SUCCESS;
+  }
+
   public static void initialize() {
     addDyeableInteractions();
     addHoneyCauldronInteractions();
@@ -791,5 +837,6 @@ public final class UntappedCauldronInteraction {
     addDyedWaterCauldronInteractions();
     addSlimeCauldronInteractions();
     addMagmaCauldronInteractions();
+    addFrozenCauldronInteractions();
   }
 }

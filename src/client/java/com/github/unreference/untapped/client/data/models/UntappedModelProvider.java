@@ -3,6 +3,7 @@ package com.github.unreference.untapped.client.data.models;
 import com.github.unreference.untapped.client.data.models.model.UntappedModelTemplates;
 import com.github.unreference.untapped.client.data.models.model.UntappedTextureSlot;
 import com.github.unreference.untapped.resources.UntappedResourceLocation;
+import com.github.unreference.untapped.world.item.UntappedItems;
 import com.github.unreference.untapped.world.level.block.*;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -16,6 +17,7 @@ import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.NotNull;
 
 public final class UntappedModelProvider extends FabricModelProvider {
   public UntappedModelProvider(FabricDataOutput output) {
@@ -216,7 +218,7 @@ public final class UntappedModelProvider extends FabricModelProvider {
   }
 
   @Override
-  public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
+  public void generateBlockStateModels(@NotNull BlockModelGenerators blockStateModelGenerator) {
     createHoneyCauldron(blockStateModelGenerator);
     createFrozenCauldron(blockStateModelGenerator);
     createPotionCauldron(blockStateModelGenerator);
@@ -226,5 +228,7 @@ public final class UntappedModelProvider extends FabricModelProvider {
   }
 
   @Override
-  public void generateItemModels(ItemModelGenerators itemModelGenerator) {}
+  public void generateItemModels(@NotNull ItemModelGenerators itemModelGenerator) {
+    itemModelGenerator.generateFlatItem(UntappedItems.QUIVER, ModelTemplates.FLAT_ITEM);
+  }
 }

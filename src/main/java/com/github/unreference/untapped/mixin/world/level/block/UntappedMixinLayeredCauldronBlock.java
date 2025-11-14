@@ -3,6 +3,8 @@ package com.github.unreference.untapped.mixin.world.level.block;
 import com.github.unreference.untapped.world.level.block.UntappedBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -38,9 +40,10 @@ public abstract class UntappedMixinLayeredCauldronBlock extends Block {
       BlockPos blockPos,
       RandomSource randomSource) {
     if (blockState.is(Blocks.WATER_CAULDRON)
-        && blockState.getValue(LayeredCauldronBlock.LEVEL) == 3) {
+        && blockState.getValue(LayeredCauldronBlock.LEVEL) == LayeredCauldronBlock.MAX_FILL_LEVEL) {
       if (serverLevel.getBiome(blockPos).value().coldEnoughToSnow(blockPos, 0)) {
         serverLevel.setBlockAndUpdate(blockPos, UntappedBlocks.FROZEN_CAULDRON.defaultBlockState());
+        serverLevel.playSound(null, blockPos, SoundEvents.GLASS_PLACE, SoundSource.BLOCKS);
       }
     }
   }

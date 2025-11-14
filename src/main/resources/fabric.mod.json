@@ -4,7 +4,9 @@
   "version": "${version}",
   "name": "Untapped",
   "description": "",
-  "authors": [],
+  "authors": [
+    "Unreference"
+  ],
   "contact": {},
   "license": "GPL-3.0",
   "icon": "assets/untapped/icon.png",

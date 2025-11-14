@@ -1,16 +1,13 @@
 package com.github.unreference.untapped.world.level.block;
 
+import com.github.unreference.untapped.core.cauldron.UntappedCauldronInteraction;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.*;
@@ -26,26 +23,7 @@ public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock {
   private static final VoxelShape SHAPE_INSIDE = Block.column(12.0, 4.0, 16.0);
 
   public UntappedFrozenCauldronBlock(Properties properties) {
-    super(properties, CauldronInteraction.EMPTY);
-  }
-
-  private static void showParticles(Entity entity, int amount) {
-    if (entity.level().isClientSide()) {
-      final BlockState blockState = Blocks.ICE.defaultBlockState();
-
-      for (int particles = 0; particles < amount; particles++) {
-        entity
-            .level()
-            .addParticle(
-                new BlockParticleOption(ParticleTypes.BLOCK, blockState),
-                entity.getX(),
-                entity.getY(),
-                entity.getZ(),
-                0.0,
-                0.0,
-                0.0);
-      }
-    }
+    super(properties, UntappedCauldronInteraction.FROZEN);
   }
 
   private static void melt(ServerLevel serverLevel, BlockPos blockPos) {
@@ -53,12 +31,9 @@ public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock {
   }
 
   private static BlockState meltsInto() {
-    return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3);
-  }
-
-  @Override
-  protected @NotNull RenderShape getRenderShape(BlockState blockState) {
-    return RenderShape.MODEL;
+    return Blocks.WATER_CAULDRON
+        .defaultBlockState()
+        .setValue(LayeredCauldronBlock.LEVEL, LayeredCauldronBlock.MAX_FILL_LEVEL);
   }
 
   @Override
@@ -105,21 +80,6 @@ public final class UntappedFrozenCauldronBlock extends AbstractCauldronBlock {
       BlockPos blockPos,
       CollisionContext collisionContext) {
     return SHAPE;
-  }
-
-  @Override
-  public void fallOn(
-      Level level, BlockState blockState, BlockPos blockPos, Entity entity, double d) {
-    if (level.isClientSide()) {
-      showParticles(entity, 5);
-    }
-
-    if (entity.causeFallDamage(d, 1.0f, level.damageSources().fall())) {
-      entity.playSound(
-          SoundType.GLASS.getFallSound(),
-          SoundType.GLASS.getVolume() * 0.5f,
-          SoundType.GLASS.getPitch() * 0.75f);
-    }
   }
 
   @Override

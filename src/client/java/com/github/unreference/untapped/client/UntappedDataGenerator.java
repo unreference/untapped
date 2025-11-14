@@ -2,6 +2,7 @@ package com.github.unreference.untapped.client;
 
 import com.github.unreference.untapped.client.data.models.UntappedModelProvider;
 import com.github.unreference.untapped.data.loot.UntappedBlockLootTableProvider;
+import com.github.unreference.untapped.data.recipes.packs.UntappedRecipeProvider;
 import com.github.unreference.untapped.data.tags.UntappedBlockTagsProvider;
 import com.github.unreference.untapped.data.tags.UntappedItemTagsProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -17,5 +18,6 @@ public class UntappedDataGenerator implements DataGeneratorEntrypoint {
 
     pack.addProvider(UntappedModelProvider::new);
     pack.addProvider(UntappedBlockLootTableProvider::new);
+    pack.addProvider(UntappedRecipeProvider::new);
   }
 }
