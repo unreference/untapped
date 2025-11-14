@@ -223,6 +223,16 @@ public record UntappedQuiverContents(List<ItemStack> items, int occupancy)
       return arrowsToGive;
     }
 
+    public ItemStack removeOneStack() {
+      if (this.items.isEmpty()) {
+        return null;
+      }
+
+      final ItemStack removedStack = this.items.removeFirst();
+      this.occupancy -= removedStack.getCount();
+      return removedStack;
+    }
+
     public UntappedQuiverContents toImmutable() {
       return new UntappedQuiverContents(List.copyOf(this.items), this.occupancy);
     }

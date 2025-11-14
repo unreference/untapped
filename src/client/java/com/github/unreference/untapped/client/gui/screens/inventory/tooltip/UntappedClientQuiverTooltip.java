@@ -16,9 +16,10 @@ public record UntappedClientQuiverTooltip(UntappedQuiverContents contents)
   private static final ResourceLocation PROGRESS_BAR_BORDER_SPRITE =
       ResourceLocation.withDefaultNamespace("container/bundle/bundle_progressbar_border");
   private static final ResourceLocation PROGRESS_BAR_FILL_SPRITE =
-      ResourceLocation.withDefaultNamespace("container/bundle/bundle_progressbar_fill");
-  private static final ResourceLocation PROGRESS_BAR_FULL_SPRITE =
       ResourceLocation.withDefaultNamespace("container/bundle/bundle_progressbar_full");
+  private static final ResourceLocation PROGRESS_BAR_FULL_SPRITE =
+      ResourceLocation.withDefaultNamespace("container/bundle/bundle_progressbar_fill");
+
   private static final ResourceLocation SLOT_HIGHLIGHT_BACK_SPRITE =
       ResourceLocation.withDefaultNamespace("container/bundle/slot_highlight_back");
   private static final ResourceLocation SLOT_HIGHLIGHT_FRONT_SPRITE =
@@ -147,6 +148,7 @@ public record UntappedClientQuiverTooltip(UntappedQuiverContents contents)
         y,
         this.getProgressBarFill(),
         PROGRESS_BAR_HEIGHT);
+
     guiGraphics.blitSprite(
         RenderPipelines.GUI_TEXTURED,
         PROGRESS_BAR_BORDER_SPRITE,
@@ -161,6 +163,10 @@ public record UntappedClientQuiverTooltip(UntappedQuiverContents contents)
     }
   }
 
+  private ResourceLocation getProgressBarTexture() {
+    return this.isFull() ? PROGRESS_BAR_FULL_SPRITE : PROGRESS_BAR_FILL_SPRITE;
+  }
+
   private Component getProgressBarFillText() {
     if (this.contents.empty()) {
       return QUIVER_EMPTY_TEXT;
@@ -172,11 +178,12 @@ public record UntappedClientQuiverTooltip(UntappedQuiverContents contents)
   private int getProgressBarFill() {
     final float occupancy =
         (float) this.contents.occupancy() / (float) UntappedQuiverContents.MAX_CAPACITY;
-    return Mth.clamp((int) (occupancy * PROGRESS_BAR_FILL_MAX), 0, PROGRESS_BAR_FILL_MAX);
-  }
 
-  private ResourceLocation getProgressBarTexture() {
-    return this.isFull() ? PROGRESS_BAR_FULL_SPRITE : PROGRESS_BAR_FILL_SPRITE;
+    if (occupancy == 0.0f) {
+      return 0;
+    }
+
+    return Math.min(1 + (int) (occupancy * (PROGRESS_BAR_FILL_MAX - 1)), PROGRESS_BAR_FILL_MAX);
   }
 
   private void renderSlot(
